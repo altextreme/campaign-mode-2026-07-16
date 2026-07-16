@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const REALM = "Campaign Mode";
+const EXPECTED_USERNAME = "anthony@tackettdesign.com";
 
 function unauthorized() {
   return new NextResponse("Authentication required", {
@@ -12,10 +13,9 @@ function unauthorized() {
 }
 
 export function middleware(request: NextRequest) {
-  const username = process.env.BASIC_AUTH_USERNAME;
   const password = process.env.BASIC_AUTH_PASSWORD;
 
-  if (!username || !password) {
+  if (!password) {
     return unauthorized();
   }
 
@@ -30,7 +30,7 @@ export function middleware(request: NextRequest) {
     const [incomingUser, ...rest] = decoded.split(":");
     const incomingPassword = rest.join(":");
 
-    if (incomingUser === username && incomingPassword === password) {
+    if (incomingUser === EXPECTED_USERNAME && incomingPassword === password) {
       return NextResponse.next();
     }
   } catch {
